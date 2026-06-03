@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GSM Brána</title>
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+    body {
+        font-family: Arial;
+        max-width: 400px;
+        margin: 40px auto;
+    }
+    input, select, button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+    pre {
+        background: #f4f4f4;
+        padding: 15px;
+        margin-top: 15px;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+
+<h2>Přidání čísla</h2>
+
+<input type="text" id="phone" placeholder="+420123456789">
+
+<select id="position"></select>
+
+<button onclick="generate()">Vytvořit SMS</button>
+<button onclick="sendSMS()">Odeslat SMS</button>
+
+<pre id="output"></pre>
+
+<script>
+// pozice
+for (let i = 170; i <= 180; i++) {
+    let opt = document.createElement("option");
+    opt.value = i;
+    opt.text = i;
+    document.getElementById("position").appendChild(opt);
+}
+
+// normalizace čísla
+function normalizePhone(phone) {
+    phone = phone.replace(/\s+/g, "");
+
+    if (phone.startsWith("+")) return "00" + phone.substring(1);
+    if (phone.startsWith("420")) return "00420" + phone.substring(3);
+    if (phone.startsWith("00420")) return phone;
+
+    return phone;
+}
+
+// generování SMS
+function generate() {
+    let phone = document.getElementById('phone').value.trim();
+    let pos = document.getElementById('position').value;
+
+    if (!phone.match(/^\+?\d{9,15}$/)) {
+        alert("Špatné číslo");
+        return;
+    }
+
+    let sms = `1234A${pos}#${normalizePhone(phone)}#`;
+
+    document.getElementById("output").innerText = sms;
+}
+
+// odeslání SMS
+function sendSMS() {
+    let smsText = document.getElementById("output").innerText;
+
+    if (!smsText) {
+        alert("Nejdříve vytvoř SMS");
+        return;
+    }
+
+    window.location.href = `sms:?body=${encodeURIComponent(smsText)}`;
+}
+</script>
+
+</body>
+</html>
