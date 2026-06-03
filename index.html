@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GSM Brána</title>
-
 <link rel="manifest" href="manifest.json">
 
 <style>
@@ -57,6 +56,7 @@ td, th {
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -89,7 +89,7 @@ td, th {
 </div>
 
 <script>
-// SW (offline)
+// offline SW
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
 }
@@ -104,12 +104,11 @@ for (let i = 170; i <= 180; i++) {
     document.getElementById("position").appendChild(opt);
 }
 
-// kontakti
+// ===== kontakty =====
 function loadContacts() {
     let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
     let dl = document.getElementById("contacts");
     dl.innerHTML = "";
-
     contacts.forEach(c => {
         dl.innerHTML += `<option value="${c}">`;
     });
@@ -117,14 +116,13 @@ function loadContacts() {
 
 function saveContact(phone) {
     let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
-
     if (!contacts.includes(phone)) {
         contacts.push(phone);
         localStorage.setItem("contacts", JSON.stringify(contacts));
     }
 }
 
-// tabulka
+// ===== tabulka =====
 function loadTable() {
     let table = document.getElementById("table");
     table.innerHTML = "<tr><th>Pozice</th><th>Číslo</th><th>Datum</th></tr>";
@@ -142,36 +140,33 @@ function loadTable() {
     }
 }
 
-// čas
+// ===== čas =====
 function getNow() {
     return new Date().toLocaleString("cs-CZ");
 }
 
-// normalizace
+// ===== NORMALIZACE (pro GSM modul) =====
 function normalizePhone(phone) {
     phone = phone.replace(/\s+/g, "");
-    if (phone.startsWith("+")) return "00" + phone.slice(1);
-    if (phone.startsWith("420")) return "00420" + phone.slice(3);
+
+    // +XXXXXXXX → 00XXXXXXXX
+    if (phone.startsWith("+")) {
+        return "00" + phone.slice(1);
+    }
+
     return phone;
 }
 
-// VALIDACE + FORMAT
+// ===== FORMÁT (univerzální – žádné CZ vnucování) =====
 function formatPhone(input) {
     let value = input.value;
 
+    // dovol jen čísla a +
     value = value.replace(/[^\d+]/g, '');
 
+    // jen jeden + na začátku
     if (value.indexOf('+') > 0) {
         value = value.replace(/\+/g, '');
-    }
-
-    if (value.startsWith('420')) {
-        value = '+420' + value.slice(3);
-    }
-
-    if (value.startsWith('+420') && value.length > 4) {
-        let rest = value.slice(4).replace(/\D/g, '');
-        value = '+420 ' + rest.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
     }
 
     input.value = value;
@@ -179,22 +174,23 @@ function formatPhone(input) {
     validatePhone(input);
 }
 
+// ===== VALIDACE (mezinárodní) =====
 function validatePhone(input) {
     let cleaned = input.value.replace(/\s/g, '');
 
-    if (cleaned.match(/^\+420\d{9}$/)) {
+    if (cleaned.match(/^\+\d{6,15}$/)) {
         input.style.border = "2px solid green";
     } else {
         input.style.border = "2px solid red";
     }
 }
 
-// hlavní generování
+// ===== GENEROVÁNÍ =====
 function generate() {
     let phone = document.getElementById('phone').value.trim();
     let pos = document.getElementById('position').value;
 
-    if (!phone.replace(/\s/g,'').match(/^\+?\d{9,15}$/)) {
+    if (!phone.replace(/\s/g,'').match(/^\+?\d{6,15}$/)) {
         alert("Neplatné číslo");
         return;
     }
@@ -208,12 +204,11 @@ function generate() {
     localStorage.setItem("date_" + pos, getNow());
 
     saveContact(phone);
-
     loadTable();
     loadContacts();
 }
 
-// odeslání
+// ===== ODESLÁNÍ =====
 function sendSMS() {
     let smsText = document.getElementById("output").innerText;
 
@@ -234,3 +229,4 @@ loadContacts();
 
 </body>
 </html>
+``
