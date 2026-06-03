@@ -6,70 +6,54 @@
 <title>GSM Brána</title>
 
 <style>
-    body {
-        font-family: -apple-system, Arial;
-        margin: 0;
-        padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
-        background: #f7f7f7;
-    }
+body {
+    font-family: -apple-system, Arial;
+    margin: 0;
+    padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+    background: #f7f7f7;
+}
 
-    .container {
-        max-width: 420px;
-        margin: auto;
-    }
+.container {
+    max-width: 420px;
+    margin: auto;
+}
 
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+input, select, button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    font-size: 16px;
+    border-radius: 10px;
+}
 
-    input, select, button {
-        width: 100%;
-        padding: 14px;
-        margin-top: 12px;
-        font-size: 16px;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-    }
+button {
+    background: #2c3e50;
+    color: white;
+    border: none;
+}
 
-    button {
-        background: #2c3e50;
-        color: white;
-        border: none;
-    }
+pre {
+    background: #fff;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 10px;
+    word-break: break-all;
+}
 
-    button:active {
-        background: #1f2d3a;
-    }
+table {
+    width: 100%;
+    margin-top: 20px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-    pre {
-        background: #fff;
-        padding: 12px;
-        margin-top: 12px;
-        border-radius: 10px;
-        word-break: break-all;
-    }
+td, th {
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+}
 
-    table {
-        width: 100%;
-        margin-top: 20px;
-        border-collapse: collapse;
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    td, th {
-        border-bottom: 1px solid #eee;
-        padding: 10px;
-        text-align: center;
-        font-size: 14px;
-    }
-
-    tr:last-child td {
-        border-bottom: none;
-    }
 </style>
 </head>
 <body>
@@ -78,7 +62,15 @@
 
 <h2>GSM Brána</h2>
 
-<input type="text" id="phone" placeholder="+420123456789">
+<input 
+    type="text" 
+    id="phone" 
+    list="contacts" 
+    placeholder="+420123456789" 
+    autofocus
+>
+
+<datalist id="contacts"></datalist>
 
 <select id="position"></select>
 
@@ -88,16 +80,14 @@
 <pre id="output"></pre>
 
 <h3>Pozice 170–180</h3>
-<table id="table">
-<tr><th>Pozice</th><th>Číslo</th></tr>
-</table>
+<table id="table"></table>
 
 </div>
 
 <script>
 const gateNumber = "+420725582214";
 
-// pozice
+// vytvoření pozic
 for (let i = 170; i <= 180; i++) {
     let opt = document.createElement("option");
     opt.value = i;
@@ -105,29 +95,57 @@ for (let i = 170; i <= 180; i++) {
     document.getElementById("position").appendChild(opt);
 }
 
+// načtení kontaktů
+function loadContacts() {
+    let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+    let datalist = document.getElementById("contacts");
+    datalist.innerHTML = "";
+
+    contacts.forEach(c => {
+        datalist.innerHTML += `<option value="${c}">`;
+    });
+}
+
+// uložení kontaktu
+function saveContact(phone) {
+    let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+
+    if (!contacts.includes(phone)) {
+        contacts.push(phone);
+        localStorage.setItem("contacts", JSON.stringify(contacts));
+    }
+}
+
 // načtení tabulky
 function loadTable() {
     let table = document.getElementById("table");
-    table.innerHTML = "<tr><th>Pozice</th><th>Číslo</th></tr>";
+    table.innerHTML = "<tr><th>Pozice</th><th>Číslo</th><th>Datum</th></tr>";
 
     for (let i = 170; i <= 180; i++) {
         let num = localStorage.getItem("pos_" + i) || "-";
+        let date = localStorage.getItem("date_" + i) || "-";
 
-        table.innerHTML += `<tr>
+        table.innerHTML += `
+        <tr>
             <td>${i}</td>
             <td>${num}</td>
+            <td>${date}</td>
         </tr>`;
     }
 }
 
-// normalizace čísla
+// formát času
+function getNow() {
+    let now = new Date();
+    return now.toLocaleString("cs-CZ");
+}
+
+// normalizace
 function normalizePhone(phone) {
     phone = phone.replace(/\s+/g, "");
 
-    if (phone.startsWith("+")) return "00" + phone.substring(1);
-    if (phone.startsWith("420")) return "00420" + phone.substring(3);
-    if (phone.startsWith("00420")) return phone;
-
+    if (phone.startsWith("+")) return "00" + phone.slice(1);
+    if (phone.startsWith("420")) return "00420" + phone.slice(3);
     return phone;
 }
 
@@ -146,11 +164,18 @@ function generate() {
 
     document.getElementById("output").innerText = sms;
 
+    // uložit číslo + čas
     localStorage.setItem("pos_" + pos, normalized);
+    localStorage.setItem("date_" + pos, getNow());
+
+    // uložit do kontaktů
+    saveContact(phone);
+
     loadTable();
+    loadContacts();
 }
 
-// odeslání SMS
+// odeslání
 function sendSMS() {
     let smsText = document.getElementById("output").innerText;
 
@@ -163,7 +188,10 @@ function sendSMS() {
         `sms:${gateNumber}?body=${encodeURIComponent(smsText)}`;
 }
 
+// init
 loadTable();
+loadContacts();
+
 </script>
 
 </body>
