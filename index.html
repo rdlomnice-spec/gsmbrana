@@ -71,9 +71,8 @@ td, th {
     list="contacts" 
     placeholder="+420123456789 nebo 00420123456789"
     inputmode="tel"
-    pattern="[0-9+]*"
+    autocomplete="tel"
     autofocus
-    oninput="formatPhone(this)"
 >
 
 <datalist id="contacts"></datalist>
@@ -91,16 +90,14 @@ td, th {
 </div>
 
 <script>
-// Service Worker
+// ✅ Service Worker
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js');
-    });
+    navigator.serviceWorker.register('sw.js');
 }
 
 const gateNumber = "+420725582214";
 
-// ✅ pozice 150–160
+// ✅ pozice
 for (let i = 150; i <= 160; i++) {
     let opt = document.createElement("option");
     opt.value = i;
@@ -127,6 +124,11 @@ function saveContact(phone) {
     }
 }
 
+// ✅ Android fix – reaguje i na našeptávač
+const phoneInput = document.getElementById("phone");
+phoneInput.addEventListener("input", () => validatePhone(phoneInput));
+phoneInput.addEventListener("change", () => validatePhone(phoneInput));
+
 // ===== tabulka =====
 function loadTable() {
     let table = document.getElementById("table");
@@ -150,6 +152,19 @@ function getNow() {
     return new Date().toLocaleString("cs-CZ");
 }
 
+// ===== validace =====
+function validatePhone(input) {
+    let cleaned = input.value.replace(/\s/g, '');
+
+    if (cleaned.match(/^\+\d{6,15}$/) || cleaned.match(/^00\d{6,15}$/)) {
+        input.style.border = "2px solid green";
+        return true;
+    } else {
+        input.style.border = "2px solid red";
+        return false;
+    }
+}
+
 // ===== normalizace =====
 function normalizePhone(phone) {
     phone = phone.replace(/\s+/g, "");
@@ -158,47 +173,16 @@ function normalizePhone(phone) {
         return "00" + phone.slice(1);
     }
 
-    if (phone.startsWith("00")) {
-        return phone;
-    }
-
     return phone;
-}
-
-// ===== formát =====
-function formatPhone(input) {
-    let value = input.value;
-
-    value = value.replace(/[^\d+]/g, '');
-
-    if (value.indexOf('+') > 0) {
-        value = value.replace(/\+/g, '');
-    }
-
-    input.value = value;
-
-    validatePhone(input);
-}
-
-// ✅ VALIDACE pro + i 00
-function validatePhone(input) {
-    let cleaned = input.value.replace(/\s/g, '');
-
-    if (cleaned.match(/^\+\d{6,15}$/) || cleaned.match(/^00\d{6,15}$/)) {
-        input.style.border = "2px solid green";
-    } else {
-        input.style.border = "2px solid red";
-    }
 }
 
 // ===== generování =====
 function generate() {
-    let phoneInput = document.getElementById('phone');
     let phone = phoneInput.value.trim();
     let pos = document.getElementById('position').value;
 
-    if (!phone.replace(/\s/g,'').match(/^\+?\d{6,15}$/)) {
-        alert("Neplatné číslo");
+    if (!validatePhone(phoneInput)) {
+        alert("Číslo musí začínat + nebo 00");
         return;
     }
 
@@ -213,9 +197,6 @@ function generate() {
     saveContact(phone);
     loadTable();
     loadContacts();
-
-    // ✅ po výběru/našeptání znovu validuj
-    validatePhone(phoneInput);
 }
 
 // ===== odeslání =====
@@ -230,6 +211,11 @@ function sendSMS() {
     window.location.href =
         `sms:${gateNumber}?body=${encodeURIComponent(smsText)}`;
 }
+
+// ✅ autofocus fix pro Android
+window.addEventListener("load", () => {
+    setTimeout(() => phoneInput.focus(), 300);
+});
 
 // init
 loadTable();
