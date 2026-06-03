@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GSM Brána</title>
+
+<!-- ✅ správný manifest -->
 <link rel="manifest" href="manifest.json">
 
 <style>
@@ -90,9 +92,11 @@ td, th {
 </div>
 
 <script>
-// Service Worker
+// ✅ SERVICE WORKER pro offline
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+    });
 }
 
 const gateNumber = "+420725582214";
@@ -146,7 +150,7 @@ function getNow() {
     return new Date().toLocaleString("cs-CZ");
 }
 
-// NORMALIZACE
+// normalizace
 function normalizePhone(phone) {
     phone = phone.replace(/\s+/g, "");
 
@@ -161,7 +165,7 @@ function normalizePhone(phone) {
     return phone;
 }
 
-// FORMÁT
+// formát
 function formatPhone(input) {
     let value = input.value;
 
@@ -176,7 +180,7 @@ function formatPhone(input) {
     validatePhone(input);
 }
 
-// VALIDACE
+// validace
 function validatePhone(input) {
     let cleaned = input.value.replace(/\s/g, '');
 
@@ -187,7 +191,7 @@ function validatePhone(input) {
     }
 }
 
-// GENEROVÁNÍ
+// generování
 function generate() {
     let phone = document.getElementById('phone').value.trim();
     let pos = document.getElementById('position').value;
@@ -210,7 +214,7 @@ function generate() {
     loadContacts();
 }
 
-// ODESLÁNÍ
+// odeslání SMS
 function sendSMS() {
     let smsText = document.getElementById("output").innerText;
 
@@ -231,3 +235,4 @@ loadContacts();
 
 </body>
 </html>
+``
