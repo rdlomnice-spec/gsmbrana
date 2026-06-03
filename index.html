@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GSM Brána</title>
 
+<link rel="manifest" href="manifest.json">
+
 <style>
 body {
     font-family: -apple-system, Arial;
@@ -53,7 +55,6 @@ td, th {
     text-align: center;
     font-size: 13px;
 }
-
 </style>
 </head>
 <body>
@@ -63,11 +64,14 @@ td, th {
 <h2>GSM Brána</h2>
 
 <input 
-    type="text" 
+    type="tel" 
     id="phone" 
     list="contacts" 
     placeholder="+420123456789" 
+    inputmode="numeric"
+    pattern="[0-9+]*"
     autofocus
+    oninput="formatPhone(this)"
 >
 
 <datalist id="contacts"></datalist>
@@ -85,9 +89,14 @@ td, th {
 </div>
 
 <script>
+// SW (offline)
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+}
+
 const gateNumber = "+420725582214";
 
-// vytvoření pozic
+// pozice
 for (let i = 170; i <= 180; i++) {
     let opt = document.createElement("option");
     opt.value = i;
@@ -95,18 +104,17 @@ for (let i = 170; i <= 180; i++) {
     document.getElementById("position").appendChild(opt);
 }
 
-// načtení kontaktů
+// kontakti
 function loadContacts() {
     let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
-    let datalist = document.getElementById("contacts");
-    datalist.innerHTML = "";
+    let dl = document.getElementById("contacts");
+    dl.innerHTML = "";
 
     contacts.forEach(c => {
-        datalist.innerHTML += `<option value="${c}">`;
+        dl.innerHTML += `<option value="${c}">`;
     });
 }
 
-// uložení kontaktu
 function saveContact(phone) {
     let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
 
@@ -116,7 +124,7 @@ function saveContact(phone) {
     }
 }
 
-// načtení tabulky
+// tabulka
 function loadTable() {
     let table = document.getElementById("table");
     table.innerHTML = "<tr><th>Pozice</th><th>Číslo</th><th>Datum</th></tr>";
@@ -134,27 +142,59 @@ function loadTable() {
     }
 }
 
-// formát času
+// čas
 function getNow() {
-    let now = new Date();
-    return now.toLocaleString("cs-CZ");
+    return new Date().toLocaleString("cs-CZ");
 }
 
 // normalizace
 function normalizePhone(phone) {
     phone = phone.replace(/\s+/g, "");
-
     if (phone.startsWith("+")) return "00" + phone.slice(1);
     if (phone.startsWith("420")) return "00420" + phone.slice(3);
     return phone;
 }
 
-// generování SMS
+// VALIDACE + FORMAT
+function formatPhone(input) {
+    let value = input.value;
+
+    value = value.replace(/[^\d+]/g, '');
+
+    if (value.indexOf('+') > 0) {
+        value = value.replace(/\+/g, '');
+    }
+
+    if (value.startsWith('420')) {
+        value = '+420' + value.slice(3);
+    }
+
+    if (value.startsWith('+420') && value.length > 4) {
+        let rest = value.slice(4).replace(/\D/g, '');
+        value = '+420 ' + rest.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+    }
+
+    input.value = value;
+
+    validatePhone(input);
+}
+
+function validatePhone(input) {
+    let cleaned = input.value.replace(/\s/g, '');
+
+    if (cleaned.match(/^\+420\d{9}$/)) {
+        input.style.border = "2px solid green";
+    } else {
+        input.style.border = "2px solid red";
+    }
+}
+
+// hlavní generování
 function generate() {
     let phone = document.getElementById('phone').value.trim();
     let pos = document.getElementById('position').value;
 
-    if (!phone.match(/^\+?\d{9,15}$/)) {
+    if (!phone.replace(/\s/g,'').match(/^\+?\d{9,15}$/)) {
         alert("Neplatné číslo");
         return;
     }
@@ -164,11 +204,9 @@ function generate() {
 
     document.getElementById("output").innerText = sms;
 
-    // uložit číslo + čas
     localStorage.setItem("pos_" + pos, normalized);
     localStorage.setItem("date_" + pos, getNow());
 
-    // uložit do kontaktů
     saveContact(phone);
 
     loadTable();
