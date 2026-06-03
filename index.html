@@ -25,6 +25,7 @@ input, select, button {
     margin-top: 12px;
     font-size: 16px;
     border-radius: 10px;
+    border: 1px solid #ccc;
 }
 
 button {
@@ -67,8 +68,8 @@ td, th {
     type="tel" 
     id="phone" 
     list="contacts" 
-    placeholder="+420123456789" 
-    inputmode="numeric"
+    placeholder="+420123456789 nebo 00420123456789"
+    inputmode="tel"
     pattern="[0-9+]*"
     autofocus
     oninput="formatPhone(this)"
@@ -89,7 +90,7 @@ td, th {
 </div>
 
 <script>
-// offline SW
+// Service Worker
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
 }
@@ -104,7 +105,7 @@ for (let i = 170; i <= 180; i++) {
     document.getElementById("position").appendChild(opt);
 }
 
-// ===== kontakty =====
+// kontakty
 function loadContacts() {
     let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
     let dl = document.getElementById("contacts");
@@ -122,7 +123,7 @@ function saveContact(phone) {
     }
 }
 
-// ===== tabulka =====
+// tabulka
 function loadTable() {
     let table = document.getElementById("table");
     table.innerHTML = "<tr><th>Pozice</th><th>Číslo</th><th>Datum</th></tr>";
@@ -140,31 +141,32 @@ function loadTable() {
     }
 }
 
-// ===== čas =====
+// čas
 function getNow() {
     return new Date().toLocaleString("cs-CZ");
 }
 
-// ===== NORMALIZACE (pro GSM modul) =====
+// NORMALIZACE
 function normalizePhone(phone) {
     phone = phone.replace(/\s+/g, "");
 
-    // +XXXXXXXX → 00XXXXXXXX
     if (phone.startsWith("+")) {
         return "00" + phone.slice(1);
+    }
+
+    if (phone.startsWith("00")) {
+        return phone;
     }
 
     return phone;
 }
 
-// ===== FORMÁT (univerzální – žádné CZ vnucování) =====
+// FORMÁT
 function formatPhone(input) {
     let value = input.value;
 
-    // dovol jen čísla a +
     value = value.replace(/[^\d+]/g, '');
 
-    // jen jeden + na začátku
     if (value.indexOf('+') > 0) {
         value = value.replace(/\+/g, '');
     }
@@ -174,18 +176,18 @@ function formatPhone(input) {
     validatePhone(input);
 }
 
-// ===== VALIDACE (mezinárodní) =====
+// VALIDACE
 function validatePhone(input) {
     let cleaned = input.value.replace(/\s/g, '');
 
-    if (cleaned.match(/^\+\d{6,15}$/)) {
+    if (cleaned.match(/^\+\d{6,15}$/) || cleaned.match(/^00\d{6,15}$/)) {
         input.style.border = "2px solid green";
     } else {
         input.style.border = "2px solid red";
     }
 }
 
-// ===== GENEROVÁNÍ =====
+// GENEROVÁNÍ
 function generate() {
     let phone = document.getElementById('phone').value.trim();
     let pos = document.getElementById('position').value;
@@ -208,7 +210,7 @@ function generate() {
     loadContacts();
 }
 
-// ===== ODESLÁNÍ =====
+// ODESLÁNÍ
 function sendSMS() {
     let smsText = document.getElementById("output").innerText;
 
@@ -229,4 +231,3 @@ loadContacts();
 
 </body>
 </html>
-``
