@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GSM Brána</title>
 
-<!-- ✅ správný manifest -->
 <link rel="manifest" href="manifest.json">
 
 <style>
@@ -86,13 +85,13 @@ td, th {
 
 <pre id="output"></pre>
 
-<h3>Pozice 170–180</h3>
+<h3>Pozice 150–160</h3>
 <table id="table"></table>
 
 </div>
 
 <script>
-// ✅ SERVICE WORKER pro offline
+// Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js');
@@ -101,15 +100,15 @@ if ('serviceWorker' in navigator) {
 
 const gateNumber = "+420725582214";
 
-// pozice
-for (let i = 170; i <= 180; i++) {
+// ✅ pozice 150–160
+for (let i = 150; i <= 160; i++) {
     let opt = document.createElement("option");
     opt.value = i;
     opt.text = i;
     document.getElementById("position").appendChild(opt);
 }
 
-// kontakty
+// ===== kontakty =====
 function loadContacts() {
     let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
     let dl = document.getElementById("contacts");
@@ -121,18 +120,19 @@ function loadContacts() {
 
 function saveContact(phone) {
     let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+
     if (!contacts.includes(phone)) {
         contacts.push(phone);
         localStorage.setItem("contacts", JSON.stringify(contacts));
     }
 }
 
-// tabulka
+// ===== tabulka =====
 function loadTable() {
     let table = document.getElementById("table");
     table.innerHTML = "<tr><th>Pozice</th><th>Číslo</th><th>Datum</th></tr>";
 
-    for (let i = 170; i <= 180; i++) {
+    for (let i = 150; i <= 160; i++) {
         let num = localStorage.getItem("pos_" + i) || "-";
         let date = localStorage.getItem("date_" + i) || "-";
 
@@ -145,12 +145,12 @@ function loadTable() {
     }
 }
 
-// čas
+// ===== čas =====
 function getNow() {
     return new Date().toLocaleString("cs-CZ");
 }
 
-// normalizace
+// ===== normalizace =====
 function normalizePhone(phone) {
     phone = phone.replace(/\s+/g, "");
 
@@ -165,7 +165,7 @@ function normalizePhone(phone) {
     return phone;
 }
 
-// formát
+// ===== formát =====
 function formatPhone(input) {
     let value = input.value;
 
@@ -180,7 +180,7 @@ function formatPhone(input) {
     validatePhone(input);
 }
 
-// validace
+// ✅ VALIDACE pro + i 00
 function validatePhone(input) {
     let cleaned = input.value.replace(/\s/g, '');
 
@@ -191,9 +191,10 @@ function validatePhone(input) {
     }
 }
 
-// generování
+// ===== generování =====
 function generate() {
-    let phone = document.getElementById('phone').value.trim();
+    let phoneInput = document.getElementById('phone');
+    let phone = phoneInput.value.trim();
     let pos = document.getElementById('position').value;
 
     if (!phone.replace(/\s/g,'').match(/^\+?\d{6,15}$/)) {
@@ -212,9 +213,12 @@ function generate() {
     saveContact(phone);
     loadTable();
     loadContacts();
+
+    // ✅ po výběru/našeptání znovu validuj
+    validatePhone(phoneInput);
 }
 
-// odeslání SMS
+// ===== odeslání =====
 function sendSMS() {
     let smsText = document.getElementById("output").innerText;
 
@@ -235,4 +239,3 @@ loadContacts();
 
 </body>
 </html>
-``
