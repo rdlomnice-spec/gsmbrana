@@ -3,16 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>GSM Brána</title>
-
-<link rel="manifest" href="manifest.json">
 
 <style>
     body {
         font-family: Arial;
-        max-width: 400px;
-        margin: 40px auto;
+        max-width: 420px;
+        margin: 20px auto;
     }
     input, select, button {
         width: 100%;
@@ -22,15 +19,25 @@
     }
     pre {
         background: #f4f4f4;
-        padding: 15px;
-        margin-top: 15px;
-        font-size: 16px;
+        padding: 10px;
+        margin-top: 10px;
+    }
+    table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    td, th {
+        border: 1px solid #ccc;
+        padding: 6px;
+        text-align: center;
+        font-size: 14px;
     }
 </style>
 </head>
 <body>
 
-<h2>Přidání čísla</h2>
+<h2>GSM Brána</h2>
 
 <input type="text" id="phone" placeholder="+420123456789">
 
@@ -41,8 +48,16 @@
 
 <pre id="output"></pre>
 
+<h3>Přehled pozic (170–180)</h3>
+<table id="table">
+<tr><th>Pozice</th><th>Číslo</th></tr>
+</table>
+
 <script>
-// pozice
+// číslo GSM modulu
+const gateNumber = "+420725582214";
+
+// vytvoření pozic
 for (let i = 170; i <= 180; i++) {
     let opt = document.createElement("option");
     opt.value = i;
@@ -50,7 +65,24 @@ for (let i = 170; i <= 180; i++) {
     document.getElementById("position").appendChild(opt);
 }
 
-// normalizace čísla
+// načtení tabulky
+function loadTable() {
+    let table = document.getElementById("table");
+
+    // vyčisti staré řádky
+    table.innerHTML = "<tr><th>Pozice</th><th>Číslo</th></tr>";
+
+    for (let i = 170; i <= 180; i++) {
+        let num = localStorage.getItem("pos_" + i) || "-";
+
+        table.innerHTML += `<tr>
+            <td>${i}</td>
+            <td>${num}</td>
+        </tr>`;
+    }
+}
+
+// převod čísla
 function normalizePhone(phone) {
     phone = phone.replace(/\s+/g, "");
 
@@ -67,16 +99,22 @@ function generate() {
     let pos = document.getElementById('position').value;
 
     if (!phone.match(/^\+?\d{9,15}$/)) {
-        alert("Špatné číslo");
+        alert("Neplatné číslo");
         return;
     }
 
-    let sms = `1234A${pos}#${normalizePhone(phone)}#`;
+    let normalized = normalizePhone(phone);
+    let sms = `1234A${pos}#${normalized}#`;
 
     document.getElementById("output").innerText = sms;
+
+    // uložit do paměti
+    localStorage.setItem("pos_" + pos, normalized);
+
+    loadTable();
 }
 
-// odeslání SMS
+// odeslání SMS (už s číslem modulu)
 function sendSMS() {
     let smsText = document.getElementById("output").innerText;
 
@@ -85,9 +123,15 @@ function sendSMS() {
         return;
     }
 
-    window.location.href = `sms:?body=${encodeURIComponent(smsText)}`;
+    window.location.href =
+        `sms:${gateNumber}?body=${encodeURIComponent(smsText)}`;
 }
+
+// inicializace tabulky
+loadTable();
+
 </script>
 
 </body>
 </html>
+``
