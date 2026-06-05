@@ -15,10 +15,7 @@ body {
     padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
 }
 
-.container {
-    max-width: 480px;
-    margin: auto;
-}
+.container { max-width: 480px; margin: auto; }
 
 .card {
     background: #fff;
@@ -27,7 +24,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* pokoj */
 .room-inline {
     display: flex;
     align-items: center;
@@ -38,7 +34,6 @@ body {
     padding: 6px;
 }
 
-/* ✅ společné inputy */
 input, select {
     width: 100%;
     padding: 10px;
@@ -48,7 +43,6 @@ input, select {
     border: 1px solid #ccc;
 }
 
-/* ✅ FIX PRO iOS DATE INPUT */
 input[type="date"] {
     appearance: none;
     -webkit-appearance: none;
@@ -56,26 +50,17 @@ input[type="date"] {
     min-height: 40px;
 }
 
-/* malé */
-.small {
-    font-size: 14px;
-    padding: 10px;
-}
-
-/* ✅ GRID ZAROVNÁNÍ (klíčové) */
 .row2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
-/* label */
 label {
     font-size: 12px;
     color: #555;
 }
 
-/* tlačítka */
 button {
     width: 100%;
     padding: 12px;
@@ -87,7 +72,6 @@ button {
     color: white;
 }
 
-/* příkaz */
 pre {
     background: #fafafa;
     padding: 8px;
@@ -101,12 +85,8 @@ pre {
     font-family: monospace;
 }
 
-/* scroll tabulky */
-.table-wrap {
-    overflow-x: auto;
-}
+.table-wrap { overflow-x: auto; }
 
-/* table */
 table {
     min-width: 540px;
     width: 100%;
@@ -136,9 +116,7 @@ td.date {
     line-height: 1.3;
 }
 
-.highlight {
-    background: #d1f2d1;
-}
+.highlight { background: #d1f2d1; }
 
 .note {
     font-size: 11px;
@@ -173,23 +151,21 @@ td.date {
 </div>
 
 <div class="card">
-
 <div class="row2">
 
 <div>
-<label>Příjezd</label>
+<label>Začátek parkování</label>
 <input type="date" id="dateFrom">
 <select id="hourFrom"></select>
 </div>
 
 <div>
-<label>Odjezd</label>
+<label>Konec parkování</label>
 <input type="date" id="dateTo">
 <select id="hourTo"></select>
 </div>
 
 </div>
-
 </div>
 
 <div class="card">
@@ -199,7 +175,6 @@ td.date {
 </div>
 
 <div class="card">
-
 <h3>Přehled pozic</h3>
 
 <div class="table-wrap">
@@ -217,7 +192,6 @@ td.date {
 <div class="note">
 ⚠️ Data nejsou synchronizovaná s bránou – pouze v telefonu
 </div>
-
 </div>
 
 </div>
@@ -225,17 +199,20 @@ td.date {
 <script>
 const gate = "+420725582214";
 
-// init pozice
-for (let i=150;i<=160;i++) position.innerHTML+=`<option>${i}</option>`;
-
-// init hodiny
-for (let i=0;i<24;i++){
- let h=i.toString().padStart(2,'0');
- hourFrom.innerHTML+=`<option>${h}</option>`;
- hourTo.innerHTML+=`<option>${h}</option>`;
+// pozice
+for (let i=150;i<=160;i++) {
+    position.innerHTML+=`<option>${i}</option>`;
 }
 
-// validace čísla
+// ✅ HODINY S IKONOU
+for (let i=0;i<24;i++){
+ let h = i.toString().padStart(2,'0');
+ let label = "🕐 " + h + ":00";
+ hourFrom.innerHTML += `<option value="${h}">${label}</option>`;
+ hourTo.innerHTML   += `<option value="${h}">${label}</option>`;
+}
+
+// validace telefonu
 function validatePhone(){
  let v=phone.value.replace(/\s/g,'');
  if (/^\+\d{6,15}$/.test(v)||/^00\d{6,15}$/.test(v)){
@@ -247,7 +224,7 @@ function validatePhone(){
 }
 phone.addEventListener("input",validatePhone);
 
-// formát
+// format SMS
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -284,7 +261,7 @@ function generate(){
  let to=makeDate(dateTo.value,hourTo.value);
 
  if(to<from){
-   alert("Odjezd nesmí být dříve než příjezd");
+   alert("Konec parkování nesmí být dříve než začátek");
    return;
  }
 
@@ -317,7 +294,6 @@ function loadTable(active=null){
 
  for(let i=150;i<=160;i++){
   let c=(i==active)?"highlight":"";
-
   table.innerHTML+=`
   <tr class="${c}">
   <td class="center">${i}</td>
