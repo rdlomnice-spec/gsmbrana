@@ -12,11 +12,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     background: #f4f4f4;
     margin: 0;
-    padding:
-        env(safe-area-inset-top)
-        12px
-        env(safe-area-inset-bottom)
-        12px;
+    padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
 }
 
 .container {
@@ -24,11 +20,6 @@ body {
     margin: auto;
 }
 
-h2 {
-    margin: 8px 0 12px;
-}
-
-/* ✅ CARD */
 .card {
     background: #fff;
     padding: 10px;
@@ -42,14 +33,12 @@ h2 {
     align-items: center;
     gap: 8px;
 }
-
 .room-inline select {
     width: 56px;
-    font-size: 13px;
     padding: 6px;
 }
 
-/* inputs */
+/* ✅ společné inputy */
 input, select {
     width: 100%;
     padding: 10px;
@@ -59,13 +48,21 @@ input, select {
     border: 1px solid #ccc;
 }
 
-/* menší */
-.small {
-    font-size: 13px;
-    padding: 8px;
+/* ✅ FIX PRO iOS DATE INPUT */
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    min-height: 40px;
 }
 
-/* 2 sloupce */
+/* malé */
+.small {
+    font-size: 14px;
+    padding: 10px;
+}
+
+/* ✅ GRID ZAROVNÁNÍ (klíčové) */
 .row2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -90,7 +87,7 @@ button {
     color: white;
 }
 
-/* ✅ příkaz */
+/* příkaz */
 pre {
     background: #fafafa;
     padding: 8px;
@@ -104,12 +101,12 @@ pre {
     font-family: monospace;
 }
 
-/* ✅ SCROLL TABULKY */
+/* scroll tabulky */
 .table-wrap {
     overflow-x: auto;
 }
 
-/* tabulka */
+/* table */
 table {
     min-width: 540px;
     width: 100%;
@@ -117,7 +114,6 @@ table {
     font-size: 12px;
 }
 
-/* šířky */
 col.pos   { width: 48px; }
 col.room  { width: 36px; }
 col.phone { width: auto; }
@@ -126,30 +122,24 @@ col.date  { width: 90px; }
 th, td {
     padding: 6px;
     border-bottom: 1px solid #eee;
-    vertical-align: top;
 }
 
-/* center */
 .center { text-align: center; }
 
-/* ✅ telefon */
 td.phone {
     text-align: left;
     white-space: nowrap;
 }
 
-/* ✅ datum */
 td.date {
     text-align: left;
     line-height: 1.3;
 }
 
-/* highlight */
 .highlight {
     background: #d1f2d1;
 }
 
-/* poznámka */
 .note {
     font-size: 11px;
     color: #c0392b;
@@ -183,21 +173,23 @@ td.date {
 </div>
 
 <div class="card">
+
 <div class="row2">
 
 <div>
 <label>Příjezd</label>
-<input type="date" id="dateFrom" class="small">
-<select id="hourFrom" class="small"></select>
+<input type="date" id="dateFrom">
+<select id="hourFrom"></select>
 </div>
 
 <div>
 <label>Odjezd</label>
-<input type="date" id="dateTo" class="small">
-<select id="hourTo" class="small"></select>
+<input type="date" id="dateTo">
+<select id="hourTo"></select>
 </div>
 
 </div>
+
 </div>
 
 <div class="card">
@@ -207,6 +199,7 @@ td.date {
 </div>
 
 <div class="card">
+
 <h3>Přehled pozic</h3>
 
 <div class="table-wrap">
@@ -224,6 +217,7 @@ td.date {
 <div class="note">
 ⚠️ Data nejsou synchronizovaná s bránou – pouze v telefonu
 </div>
+
 </div>
 
 </div>
@@ -231,19 +225,17 @@ td.date {
 <script>
 const gate = "+420725582214";
 
-// pozice
-for (let i=150;i<=160;i++) {
-    position.innerHTML+=`<option>${i}</option>`;
-}
+// init pozice
+for (let i=150;i<=160;i++) position.innerHTML+=`<option>${i}</option>`;
 
-// hodiny
+// init hodiny
 for (let i=0;i<24;i++){
  let h=i.toString().padStart(2,'0');
  hourFrom.innerHTML+=`<option>${h}</option>`;
  hourTo.innerHTML+=`<option>${h}</option>`;
 }
 
-// validace telefonu
+// validace čísla
 function validatePhone(){
  let v=phone.value.replace(/\s/g,'');
  if (/^\+\d{6,15}$/.test(v)||/^00\d{6,15}$/.test(v)){
@@ -255,7 +247,7 @@ function validatePhone(){
 }
 phone.addEventListener("input",validatePhone);
 
-// format SMS
+// formát
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -263,15 +255,12 @@ function format(d,h){
  ("0"+x.getDate()).slice(-2)+h+"00";
 }
 
-// display
 function niceDate(str){
  if(!str) return "-";
  return `${str.slice(4,6)}.${str.slice(2,4)}.20${str.slice(0,2)}<br>${str.slice(6,8)}:${str.slice(8,10)}`;
 }
 
-function makeDate(d,h){
- return new Date(d+"T"+h+":00");
-}
+function makeDate(d,h){ return new Date(d+"T"+h+":00"); }
 
 function norm(p){
  p=p.replace(/\s/g,'');
@@ -319,7 +308,6 @@ function sendSMS(){
    alert("Nejdříve vygeneruj příkaz");
    return;
  }
-
  location.href=`sms:${gate}?body=${encodeURIComponent(output.innerText)}`;
 }
 
