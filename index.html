@@ -91,9 +91,9 @@ table {
     font-size: 11px;
 }
 
-/* ✅ přesné šířky */
+/* ✅ FINÁLNÍ ŠÍŘKY */
 col.pos   { width: 48px; }
-col.room  { width: 48px; }
+col.room  { width: 36px; }
 col.phone { width: auto; }
 col.date  { width: 80px; }
 
@@ -103,10 +103,10 @@ th, td {
     vertical-align: top;
 }
 
-/* centrované */
+/* center */
 .center { text-align: center; }
 
-/* ✅ telefon – nepřetéká */
+/* ✅ telefon – stabilní */
 td.phone {
     text-align: left;
     white-space: nowrap;
@@ -225,7 +225,7 @@ function validatePhone(){
 }
 phone.addEventListener("input",validatePhone);
 
-// formát SMS
+// format SMS
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -233,7 +233,7 @@ function format(d,h){
  ("0"+x.getDate()).slice(-2)+h+"00";
 }
 
-// zobrazení
+// display
 function niceDate(str){
  if(!str) return "-";
  return `${str.slice(4,6)}.${str.slice(2,4)}.20${str.slice(0,2)}<br>${str.slice(6,8)}:${str.slice(8,10)}`;
@@ -247,7 +247,6 @@ function norm(p){
  return p;
 }
 
-// generování
 function generate(){
 
  if(!validatePhone()){
@@ -283,7 +282,6 @@ function generate(){
  loadTable(position.value);
 }
 
-// odeslání
 function sendSMS(){
  if(!output.innerText){
    alert("Nejdříve vygeneruj příkaz");
@@ -292,7 +290,6 @@ function sendSMS(){
  location.href=`sms:${gate}?body=${encodeURIComponent(output.innerText)}`;
 }
 
-// tabulka
 function loadTable(active=null){
  table.innerHTML =
  "<tr><th class='center'>Poz</th><th class='center'>Pokoj</th><th>Telefon</th><th>Příjezd</th><th>Odjezd</th></tr>";
@@ -316,3 +313,4 @@ loadTable();
 
 </body>
 </html>
+``
