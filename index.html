@@ -83,19 +83,24 @@ pre {
     font-family: monospace;
 }
 
-/* table */
+/* ✅ WRAPPER PRO SCROLL */
+.table-wrap {
+    overflow-x: auto;
+}
+
+/* ✅ TABULKA */
 table {
+    min-width: 520px;   /* ✅ větší než mobil → aktivuje scroll */
     width: 100%;
-    table-layout: fixed;
     border-collapse: collapse;
     font-size: 11px;
 }
 
-/* ✅ FINÁLNÍ ŠÍŘKY */
+/* pevné šířky */
 col.pos   { width: 48px; }
 col.room  { width: 36px; }
 col.phone { width: auto; }
-col.date  { width: 80px; }
+col.date  { width: 90px; }
 
 th, td {
     padding: 5px;
@@ -103,17 +108,12 @@ th, td {
     vertical-align: top;
 }
 
-/* center */
 .center { text-align: center; }
 
-/* ✅ telefon – stabilní */
+/* ✅ telefon – vždy celý */
 td.phone {
     text-align: left;
     white-space: nowrap;
-    overflow-x: auto;
-}
-td.phone::-webkit-scrollbar {
-    height: 3px;
 }
 
 /* datum */
@@ -183,6 +183,7 @@ td.date {
 <div class="card">
 <h3>Přehled pozic</h3>
 
+<div class="table-wrap">
 <table id="table">
 <colgroup>
 <col class="pos">
@@ -192,6 +193,7 @@ td.date {
 <col class="date">
 </colgroup>
 </table>
+</div>
 
 <div class="note">
 ⚠️ Data nejsou synchronizovaná s bránou – pouze v telefonu
@@ -313,4 +315,3 @@ loadTable();
 
 </body>
 </html>
-``
