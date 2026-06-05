@@ -24,6 +24,7 @@ body {
     margin-bottom: 10px;
 }
 
+/* pokoj */
 .room-inline {
     display: flex;
     align-items: center;
@@ -34,6 +35,7 @@ body {
     padding: 6px;
 }
 
+/* inputy */
 input, select {
     width: 100%;
     padding: 10px;
@@ -43,24 +45,26 @@ input, select {
     border: 1px solid #ccc;
 }
 
+/* ✅ DŮLEŽITÉ: NEODSTRAŇOVAT appearance */
 input[type="date"] {
-    appearance: none;
-    -webkit-appearance: none;
     width: 100%;
-    min-height: 40px;
+    height: 42px; /* sjednocení výšky */
 }
 
+/* grid */
 .row2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
+/* label */
 label {
     font-size: 12px;
     color: #555;
 }
 
+/* tlačítka */
 button {
     width: 100%;
     padding: 12px;
@@ -72,6 +76,7 @@ button {
     color: white;
 }
 
+/* příkaz */
 pre {
     background: #fafafa;
     padding: 8px;
@@ -85,6 +90,7 @@ pre {
     font-family: monospace;
 }
 
+/* tabulka */
 .table-wrap { overflow-x: auto; }
 
 table {
@@ -151,6 +157,7 @@ td.date {
 </div>
 
 <div class="card">
+
 <div class="row2">
 
 <div>
@@ -166,6 +173,7 @@ td.date {
 </div>
 
 </div>
+
 </div>
 
 <div class="card">
@@ -175,6 +183,7 @@ td.date {
 </div>
 
 <div class="card">
+
 <h3>Přehled pozic</h3>
 
 <div class="table-wrap">
@@ -192,6 +201,7 @@ td.date {
 <div class="note">
 ⚠️ Data nejsou synchronizovaná s bránou – pouze v telefonu
 </div>
+
 </div>
 
 </div>
@@ -204,12 +214,12 @@ for (let i=150;i<=160;i++) {
     position.innerHTML+=`<option>${i}</option>`;
 }
 
-// ✅ HODINY S IKONOU
+// hodiny (s ikonou)
 for (let i=0;i<24;i++){
- let h = i.toString().padStart(2,'0');
- let label = "🕐 " + h + ":00";
- hourFrom.innerHTML += `<option value="${h}">${label}</option>`;
- hourTo.innerHTML   += `<option value="${h}">${label}</option>`;
+ let h=i.toString().padStart(2,'0');
+ let label="🕐 "+h+":00";
+ hourFrom.innerHTML+=`<option value="${h}">${label}</option>`;
+ hourTo.innerHTML+=`<option value="${h}">${label}</option>`;
 }
 
 // validace telefonu
@@ -224,7 +234,6 @@ function validatePhone(){
 }
 phone.addEventListener("input",validatePhone);
 
-// format SMS
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -294,6 +303,7 @@ function loadTable(active=null){
 
  for(let i=150;i<=160;i++){
   let c=(i==active)?"highlight":"";
+
   table.innerHTML+=`
   <tr class="${c}">
   <td class="center">${i}</td>
