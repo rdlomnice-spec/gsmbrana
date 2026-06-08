@@ -6,141 +6,147 @@
 <title>GSM Brána</title>
 
 <style>
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    background:#f4f4f4;
+    margin:0;
+    padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
 }
 
-.container { max-width: 480px; margin: auto; }
+.container{max-width:480px;margin:auto}
 
-.card {
-    background: #fff;
-    padding: 10px;
-    border-radius: 12px;
-    margin-bottom: 10px;
+.card{
+    background:#fff;
+    padding:10px;
+    border-radius:12px;
+    margin-bottom:10px;
 }
 
 /* pokoj */
-.room-inline {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.room-inline select {
-    width: 56px;
-    padding: 6px;
+.room-inline{display:flex;align-items:center;gap:8px}
+.room-inline select{width:56px;padding:6px}
+
+/* ✅ společné inputy */
+input,select{
+    width:100%;
+    font-size:14px;
+    border-radius:10px;
+    border:1px solid #ccc;
 }
 
-/* inputy */
-input, select {
-    width: 100%;
-    font-size: 14px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
+/* ✅ FIX iOS DATE */
+input[type="date"]{
+    height:42px;
+    padding:0 10px 0 34px;
+    line-height:42px;
 }
 
-/* ✅ WRAPPER S IKONOU */
-.field {
-    position: relative;
-    margin-top: 6px;
+/* ✅ odstranění iOS vnitřních offsetů */
+input[type="date"]::-webkit-date-and-time-value{
+    text-align:left;
 }
 
-.field span {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 14px;
+/* wrapper */
+.field{
+    position:relative;
+    margin-top:6px;
 }
 
-/* ✅ sjednocená výška */
+/* ikonka */
+.field span{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    pointer-events:none;
+}
+
+/* ✅ sjednocení výšky */
 .field input,
-.field select {
-    height: 42px;
-    padding: 10px 10px 10px 34px;
+.field select{
+    height:42px;
+    padding:0 10px 0 34px;
 }
 
-/* grid */
-.row2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+/* layout */
+.row2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
 }
 
-label {
-    font-size: 12px;
-    color: #555;
+label{
+    font-size:12px;
+    color:#555;
 }
 
 /* tlačítka */
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    font-size: 15px;
-    border-radius: 10px;
-    border: none;
-    background: #2c3e50;
-    color: white;
+button{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    font-size:15px;
+    border-radius:10px;
+    border:none;
+    background:#2c3e50;
+    color:#fff;
 }
 
 /* příkaz */
-pre {
-    background: #fafafa;
-    padding: 8px;
-    margin-top: 6px;
-    border-radius: 10px;
-    font-size: 12px;
-    height: 34px;
-    overflow-x: auto;
-    white-space: nowrap;
-    color: #888;
-    font-family: monospace;
+pre{
+    background:#fafafa;
+    padding:8px;
+    margin-top:6px;
+    border-radius:10px;
+    font-size:12px;
+    height:34px;
+    overflow-x:auto;
+    white-space:nowrap;
+    font-family:monospace;
+    color:#888;
 }
 
 /* tabulka */
-.table-wrap { overflow-x: auto; }
+.table-wrap{overflow-x:auto}
 
-table {
-    min-width: 540px;
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
+table{
+    min-width:540px;
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
 }
 
-col.pos { width: 48px; }
-col.room { width: 36px; }
-col.phone { width: auto; }
-col.date { width: 90px; }
+col.pos{width:48px}
+col.room{width:36px}
+col.phone{width:auto}
+col.date{width:90px}
 
-th, td {
-    padding: 6px;
-    border-bottom: 1px solid #eee;
+th,td{
+    padding:6px;
+    border-bottom:1px solid #eee;
 }
 
-.center { text-align: center; }
+.center{text-align:center}
 
-td.phone {
-    text-align: left;
-    white-space: nowrap;
+td.phone{
+    text-align:left;
+    white-space:nowrap;
 }
 
-td.date {
-    text-align: left;
-    line-height: 1.3;
+td.date{
+    text-align:left;
+    line-height:1.3;
 }
 
-.highlight { background: #d1f2d1; }
+.highlight{background:#d1f2d1}
 
-.note {
-    font-size: 11px;
-    color: #c0392b;
-    text-align: center;
-    margin-top: 6px;
+.note{
+    font-size:11px;
+    color:#c0392b;
+    text-align:center;
+    margin-top:6px;
 }
 </style>
 </head>
@@ -184,7 +190,6 @@ td.date {
 <span>🕐</span>
 <select id="hourFrom"></select>
 </div>
-
 </div>
 
 <div>
@@ -199,11 +204,9 @@ td.date {
 <span>🕐</span>
 <select id="hourTo"></select>
 </div>
-
 </div>
 
 </div>
-
 </div>
 
 <div class="card">
@@ -213,7 +216,6 @@ td.date {
 </div>
 
 <div class="card">
-
 <h3>Přehled pozic</h3>
 
 <div class="table-wrap">
@@ -229,42 +231,38 @@ td.date {
 </div>
 
 <div class="note">
-⚠️ Data nejsou synchronizovaná s bránou – pouze v telefonu
+⚠️ Data nejsou synchronizovaná s bránou
 </div>
-
 </div>
 
 </div>
 
 <script>
-const gate = "+420725582214";
+const gate="+420725582214";
 
 // pozice
-for (let i=150;i<=160;i++) {
-    position.innerHTML+=`<option>${i}</option>`;
+for(let i=150;i<=160;i++){
+ position.innerHTML+=`<option>${i}</option>`;
 }
 
 // hodiny
-for (let i=0;i<24;i++){
+for(let i=0;i<24;i++){
  let h=i.toString().padStart(2,'0');
- let label=h+":00";
- hourFrom.innerHTML+=`<option value="${h}">${label}</option>`;
- hourTo.innerHTML+=`<option value="${h}">${label}</option>`;
+ hourFrom.innerHTML+=`<option value="${h}">${h}:00</option>`;
+ hourTo.innerHTML+=`<option value="${h}">${h}:00</option>`;
 }
 
 // validace
 function validatePhone(){
  let v=phone.value.replace(/\s/g,'');
- if (/^\+\d{6,15}$/.test(v)||/^00\d{6,15}$/.test(v)){
-   phone.style.border="2px solid green";
-   return true;
+ if(/^\+\d{6,15}$/.test(v)||/^00\d{6,15}$/.test(v)){
+  phone.style.border="2px solid green";return true;
  }
- phone.style.border="2px solid red";
- return false;
+ phone.style.border="2px solid red";return false;
 }
 phone.addEventListener("input",validatePhone);
 
-// formát
+// format
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -272,40 +270,27 @@ function format(d,h){
  ("0"+x.getDate()).slice(-2)+h+"00";
 }
 
-function niceDate(str){
- if(!str) return "-";
- return `${str.slice(4,6)}.${str.slice(2,4)}.20${str.slice(0,2)}<br>${str.slice(6,8)}:${str.slice(8,10)}`;
-}
+function makeDate(d,h){return new Date(d+"T"+h+":00")}
 
-function makeDate(d,h){
- return new Date(d+"T"+h+":00");
+function niceDate(s){
+ if(!s)return"-";
+ return `${s.slice(4,6)}.${s.slice(2,4)}.20${s.slice(0,2)}<br>${s.slice(6,8)}:${s.slice(8,10)}`;
 }
 
 function norm(p){
  p=p.replace(/\s/g,'');
- if(p.startsWith("+")) return "00"+p.slice(1);
+ if(p.startsWith("+"))return"00"+p.slice(1);
  return p;
 }
 
 function generate(){
-
- if(!validatePhone()){
-   alert("Číslo musí začínat + nebo 00");
-   return;
- }
-
- if(!dateFrom.value||!dateTo.value){
-   alert("Vyplň datumy");
-   return;
- }
+ if(!validatePhone())return alert("Špatné číslo");
+ if(!dateFrom.value||!dateTo.value)return alert("Vyplň datumy");
 
  let from=makeDate(dateFrom.value,hourFrom.value);
  let to=makeDate(dateTo.value,hourTo.value);
 
- if(to<from){
-   alert("Konec parkování nesmí být dříve než začátek");
-   return;
- }
+ if(to<from)return alert("Konec parkování nesmí být dříve než začátek");
 
  let f=format(dateFrom.value,hourFrom.value);
  let t=format(dateTo.value,hourTo.value);
@@ -323,19 +308,16 @@ function generate(){
 }
 
 function sendSMS(){
- if(!output.innerText){
-   alert("Nejdříve vygeneruj příkaz");
-   return;
- }
+ if(!output.innerText)return alert("Nejdříve generuj");
  location.href=`sms:${gate}?body=${encodeURIComponent(output.innerText)}`;
 }
 
-function loadTable(active=null){
- table.innerHTML =
- "<tr><th class='center'>Poz</th><th class='center'>Pokoj</th><th>Telefon</th><th>Příjezd</th><th>Odjezd</th></tr>";
+function loadTable(a=null){
+ table.innerHTML="<tr><th class='center'>Poz</th><th class='center'>Pokoj</th><th>Telefon</th><th>Příjezd</th><th>Odjezd</th></tr>";
 
  for(let i=150;i<=160;i++){
-  let c=(i==active)?"highlight":"";
+  let c=(i==a)?"highlight":"";
+
   table.innerHTML+=`
   <tr class="${c}">
   <td class="center">${i}</td>
