@@ -35,7 +35,7 @@ body{
 }
 .room-inline select{width:56px}
 
-/* ✅ základ */
+/* základ */
 input,select{
  width:100%;
  min-width:0;
@@ -46,19 +46,21 @@ input,select{
  display:block;
 }
 
-/* ✅ GRID */
-.row2{
+/* ✅ hlavní rozdělení */
+.grid-main{
  display:grid;
  grid-template-columns:1fr 1fr;
- gap:10px;
+ gap:12px;
 }
 
-.row2 > div{
+.col{
+ display:flex;
+ flex-direction:column;
  min-width:0;
- overflow:hidden;   /* ✅ klíč proti přetékání */
+ overflow:hidden;
 }
 
-/* ✅ DATE – pouze ohraničení */
+/* ✅ DATE (native safe) */
 input[type="date"]{
  height:42px;
  padding:0 10px;
@@ -86,6 +88,7 @@ input[type="date"]{
  padding-left:34px;
 }
 
+/* label */
 label{
  font-size:12px;
  color:#555;
@@ -105,7 +108,7 @@ button{
  color:#fff;
 }
 
-/* příkaz */
+/* výstup */
 pre{
  background:#fafafa;
  padding:8px;
@@ -166,6 +169,7 @@ td.date{
 
 <h2>GSM Brána</h2>
 
+<!-- INPUTY -->
 <div class="card">
 
 <div class="room-inline">
@@ -184,11 +188,14 @@ td.date{
 
 </div>
 
+<!-- DATUM + ČAS -->
 <div class="card">
 
-<div class="row2">
+<div class="grid-main">
 
-<div>
+<!-- ZAČÁTEK -->
+<div class="col">
+
 <label>📅 Začátek parkování</label>
 <input type="date" id="dateFrom">
 
@@ -196,9 +203,12 @@ td.date{
 <span>🕐</span>
 <select id="hourFrom"></select>
 </div>
+
 </div>
 
-<div>
+<!-- KONEC -->
+<div class="col">
+
 <label>📅 Konec parkování</label>
 <input type="date" id="dateTo">
 
@@ -206,18 +216,21 @@ td.date{
 <span>🕐</span>
 <select id="hourTo"></select>
 </div>
-</div>
 
 </div>
 
 </div>
 
+</div>
+
+<!-- GENEROVÁNÍ -->
 <div class="card">
 <button onclick="generate()">Generovat příkaz</button>
 <button onclick="sendSMS()">Odeslat SMS</button>
 <pre id="output"></pre>
 </div>
 
+<!-- TABULKA -->
 <div class="card">
 <h3>Přehled pozic</h3>
 
@@ -241,29 +254,29 @@ td.date{
 <script>
 const gate="+420725582214";
 
-// init
+/* pozice */
 for(let i=150;i<=160;i++){
  position.innerHTML+=`<option>${i}</option>`;
 }
 
-// hodiny
+/* hodiny */
 for(let i=0;i<24;i++){
  let h=i.toString().padStart(2,'0');
  hourFrom.innerHTML+=`<option value="${h}">${h}:00</option>`;
  hourTo.innerHTML+=`<option value="${h}">${h}:00</option>`;
 }
 
+/* validace */
 function validatePhone(){
  let v=phone.value.replace(/\s/g,'');
  if(/^\+\d{6,15}$/.test(v)||/^00\d{6,15}$/.test(v)){
-  phone.style.border="2px solid green";
-  return true;
+  phone.style.border="2px solid green"; return true;
  }
- phone.style.border="2px solid red";
- return false;
+ phone.style.border="2px solid red"; return false;
 }
 phone.addEventListener("input",validatePhone);
 
+/* formát */
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -276,31 +289,31 @@ function makeDate(d,h){
 }
 
 function niceDate(s){
- if(!s)return"-";
+ if(!s)return "-";
  return `${s.slice(4,6)}.${s.slice(2,4)}.20${s.slice(0,2)}<br>${s.slice(6,8)}:${s.slice(8,10)}`;
 }
 
 function norm(p){
  p=p.replace(/\s/g,'');
- if(p.startsWith("+"))return"00"+p.slice(1);
+ if(p.startsWith("+")) return "00"+p.slice(1);
  return p;
 }
 
+/* generování */
 function generate(){
 
- if(!validatePhone())return alert("Špatné číslo");
- if(!dateFrom.value||!dateTo.value)return alert("Vyplň datumy");
+ if(!validatePhone()) return alert("Špatné číslo");
+ if(!dateFrom.value||!dateTo.value) return alert("Vyplň datumy");
 
  let from=makeDate(dateFrom.value,hourFrom.value);
  let to=makeDate(dateTo.value,hourTo.value);
 
- if(to<from)return alert("Konec nesmí být před začátkem");
+ if(to<from) return alert("Konec nesmí být před začátkem");
 
  let f=format(dateFrom.value,hourFrom.value);
  let t=format(dateTo.value,hourTo.value);
 
  let sms=`1234A${position.value}#${norm(phone.value)}#${f}#${t}#`;
-
  output.innerText=sms;
 
  localStorage.setItem("pos_"+position.value,norm(phone.value));
@@ -311,11 +324,13 @@ function generate(){
  loadTable(position.value);
 }
 
+/* SMS */
 function sendSMS(){
- if(!output.innerText)return alert("Nejdříve generuj");
+ if(!output.innerText) return alert("Nejdříve generuj");
  location.href=`sms:${gate}?body=${encodeURIComponent(output.innerText)}`;
 }
 
+/* tabulka */
 function loadTable(active=null){
  table.innerHTML="<tr><th class='center'>Poz</th><th class='center'>Pokoj</th><th>Telefon</th><th>Příjezd</th><th>Odjezd</th></tr>";
 
