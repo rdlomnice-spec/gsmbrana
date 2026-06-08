@@ -2,151 +2,162 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
 <title>GSM Brána</title>
 
-<style>
-*{box-sizing:border-box}
+<!-- ✅ PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-    background:#f4f4f4;
-    margin:0;
-    padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
+<style>
+* { box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial;
+    background: #f4f4f4;
+    margin: 0;
+    padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
 }
 
-.container{max-width:480px;margin:auto}
+.container { max-width: 480px; margin: auto; }
 
-.card{
-    background:#fff;
-    padding:10px;
-    border-radius:12px;
-    margin-bottom:10px;
+.card {
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 10px;
 }
 
 /* pokoj */
-.room-inline{display:flex;align-items:center;gap:8px}
-.room-inline select{width:56px;padding:6px}
-
-/* ✅ společné inputy */
-input,select{
-    width:100%;
-    font-size:14px;
-    border-radius:10px;
-    border:1px solid #ccc;
+.room-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.room-inline select {
+    width: 56px;
 }
 
-/* ✅ FIX iOS DATE */
-input[type="date"]{
-    height:42px;
-    padding:0 10px 0 34px;
-    line-height:42px;
-}
-
-/* ✅ odstranění iOS vnitřních offsetů */
-input[type="date"]::-webkit-date-and-time-value{
-    text-align:left;
+/* inputy */
+input, select {
+    width: 100%;
+    min-width: 0; /* ✅ FIX iOS */
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
 }
 
 /* wrapper */
-.field{
-    position:relative;
-    margin-top:6px;
+.field {
+    position: relative;
+    margin-top: 6px;
 }
 
-/* ikonka */
-.field span{
-    position:absolute;
-    left:10px;
-    top:50%;
-    transform:translateY(-50%);
-    pointer-events:none;
+.field span {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
 }
 
-/* ✅ sjednocení výšky */
+/* ✅ sjednocení výšky + šířky */
 .field input,
-.field select{
-    height:42px;
-    padding:0 10px 0 34px;
+.field select {
+    height: 42px;
+    width: 100%;
+    padding: 0 10px 0 34px;
 }
 
-/* layout */
-.row2{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+/* datum fix */
+input[type="date"] {
+    height: 42px;
 }
 
-label{
-    font-size:12px;
-    color:#555;
+/* ✅ layout */
+.row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.row2 > div {
+    min-width: 0; /* ✅ důležité */
+}
+
+label {
+    font-size: 12px;
+    color: #555;
 }
 
 /* tlačítka */
-button{
-    width:100%;
-    padding:12px;
-    margin-top:6px;
-    font-size:15px;
-    border-radius:10px;
-    border:none;
-    background:#2c3e50;
-    color:#fff;
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: none;
+    background: #2c3e50;
+    color: white;
 }
 
 /* příkaz */
-pre{
-    background:#fafafa;
-    padding:8px;
-    margin-top:6px;
-    border-radius:10px;
-    font-size:12px;
-    height:34px;
-    overflow-x:auto;
-    white-space:nowrap;
-    font-family:monospace;
-    color:#888;
+pre {
+    background: #fafafa;
+    padding: 8px;
+    margin-top: 6px;
+    border-radius: 10px;
+    font-size: 12px;
+    height: 34px;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 /* tabulka */
-.table-wrap{overflow-x:auto}
-
-table{
-    min-width:540px;
-    width:100%;
-    border-collapse:collapse;
-    font-size:12px;
+.table-wrap {
+    overflow-x: auto;
 }
 
-col.pos{width:48px}
-col.room{width:36px}
-col.phone{width:auto}
-col.date{width:90px}
-
-th,td{
-    padding:6px;
-    border-bottom:1px solid #eee;
+table {
+    min-width: 540px;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
 }
 
-.center{text-align:center}
+col.pos { width: 48px; }
+col.room { width: 36px; }
+col.phone { width: auto; }
+col.date { width: 90px; }
 
-td.phone{
-    text-align:left;
-    white-space:nowrap;
+th, td {
+    padding: 6px;
+    border-bottom: 1px solid #eee;
 }
 
-td.date{
-    text-align:left;
-    line-height:1.3;
+.center { text-align: center; }
+
+td.phone {
+    text-align: left;
+    white-space: nowrap;
 }
 
-.highlight{background:#d1f2d1}
+td.date {
+    text-align: left;
+    line-height: 1.3;
+}
 
-.note{
-    font-size:11px;
-    color:#c0392b;
-    text-align:center;
-    margin-top:6px;
+.highlight { background: #d1f2d1; }
+
+.note {
+    font-size: 11px;
+    color: #c0392b;
+    text-align: center;
+    margin-top: 6px;
 }
 </style>
 </head>
@@ -162,7 +173,8 @@ td.date{
 <div class="room-inline">
 <label>Pokoj</label>
 <select id="room">
-<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+<option>1</option><option>2</option><option>3</option>
+<option>4</option><option>5</option>
 </select>
 </div>
 
@@ -175,7 +187,6 @@ td.date{
 </div>
 
 <div class="card">
-
 <div class="row2">
 
 <div>
@@ -190,6 +201,7 @@ td.date{
 <span>🕐</span>
 <select id="hourFrom"></select>
 </div>
+
 </div>
 
 <div>
@@ -204,6 +216,7 @@ td.date{
 <span>🕐</span>
 <select id="hourTo"></select>
 </div>
+
 </div>
 
 </div>
@@ -231,8 +244,9 @@ td.date{
 </div>
 
 <div class="note">
-⚠️ Data nejsou synchronizovaná s bránou
+⚠️ Data nejsou synchronizovaná
 </div>
+
 </div>
 
 </div>
@@ -240,12 +254,11 @@ td.date{
 <script>
 const gate="+420725582214";
 
-// pozice
+// init
 for(let i=150;i<=160;i++){
  position.innerHTML+=`<option>${i}</option>`;
 }
 
-// hodiny
 for(let i=0;i<24;i++){
  let h=i.toString().padStart(2,'0');
  hourFrom.innerHTML+=`<option value="${h}">${h}:00</option>`;
@@ -262,7 +275,7 @@ function validatePhone(){
 }
 phone.addEventListener("input",validatePhone);
 
-// format
+// generování
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -270,7 +283,9 @@ function format(d,h){
  ("0"+x.getDate()).slice(-2)+h+"00";
 }
 
-function makeDate(d,h){return new Date(d+"T"+h+":00")}
+function makeDate(d,h){
+ return new Date(d+"T"+h+":00");
+}
 
 function niceDate(s){
  if(!s)return"-";
@@ -284,6 +299,7 @@ function norm(p){
 }
 
 function generate(){
+
  if(!validatePhone())return alert("Špatné číslo");
  if(!dateFrom.value||!dateTo.value)return alert("Vyplň datumy");
 
@@ -317,7 +333,6 @@ function loadTable(a=null){
 
  for(let i=150;i<=160;i++){
   let c=(i==a)?"highlight":"";
-
   table.innerHTML+=`
   <tr class="${c}">
   <td class="center">${i}</td>
