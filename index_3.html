@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GSM Brána</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
+ background:#f4f4f4;
+ margin:0;
+ padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
+}
+
+.container{
+ max-width:480px;
+ margin:auto;
+}
+
+.card{
+ background:#fff;
+ padding:10px;
+ border-radius:12px;
+ margin-bottom:10px;
+}
+
+.room-inline{
+ display:flex;
+ align-items:center;
+ gap:8px;
+}
+.room-inline select{width:56px}
+
+/* ✅ základ */
+input,select{
+ width:100%;
+ min-width:0;
+ font-size:16px;
+ border-radius:10px;
+ border:1px solid #ccc;
+ display:block;
+}
+
+/* ✅ GRID */
+.grid-main{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+
+.col{
+ display:flex;
+ flex-direction:column;
+ min-width:0;
+}
+
+/* ✅ WRAPPER PRO DATE (HLAVNÍ FIX) */
+.date-wrap{
+ border:1px solid #ccc;
+ border-radius:10px;
+ height:42px;
+ overflow:hidden;
+ background:#fff;
+}
+
+/* ✅ DATE */
+.date-wrap input{
+ border:none;
+ height:42px;
+ width:100%;
+ padding:0 10px;
+ font-size:16px;
+ text-align:left;
+ background:transparent;
+}
+
+/* ✅ TIME */
+.field{
+ position:relative;
+ margin-top:6px;
+}
+
+.field span{
+ position:absolute;
+ left:10px;
+ top:50%;
+ transform:translateY(-50%);
+ pointer-events:none;
+}
+
+.field select{
+ height:42px;
+ padding-left:34px;
+}
+
+/* label */
+label{
+ font-size:12px;
+ color:#555;
+ margin-top:6px;
+}
+
+/* tlačítka */
+button{
+ width:100%;
+ padding:12px;
+ margin-top:6px;
+ font-size:15px;
+ border-radius:10px;
+ border:none;
+ background:#2c3e50;
+ color:#fff;
+}
+
+/* output */
+pre{
+ background:#fafafa;
+ padding:8px;
+ margin-top:6px;
+ border-radius:10px;
+ font-size:12px;
+ height:34px;
+ overflow-x:auto;
+ white-space:nowrap;
+}
+
+/* table */
+.table-wrap{overflow-x:auto}
+
+table{
+ min-width:540px;
+ width:100%;
+ border-collapse:collapse;
+ font-size:12px;
+}
+
+th,td{
+ padding:6px;
+ border-bottom:1px solid #eee;
+}
+
+.center{text-align:center}
+.highlight{background:#d1f2d1}
+
+.note{
+ font-size:11px;
+ color:#c0392b;
+ text-align:center;
+ margin-top:6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>GSM Brána</h2>
+
+<div class="card">
+<div class="room-inline">
+<label>Pokoj</label>
+<select id="room">
+<option>1</option><option>2</option><option>3</option>
+<option>4</option><option>5</option>
+</select>
+</div>
+
+<label>Telefon</label>
+<input id="phone" type="tel" placeholder="+420...">
+
+<label>Pozice</label>
+<select id="position"></select>
+</div>
+
+<div class="card">
+
+<div class="grid-main">
+
+<!-- ZAČÁTEK -->
+<div class="col">
+<label>📅 Začátek parkování</label>
+
+<div class="date-wrap">
+<input type="date" id="dateFrom">
+</div>
+
+<div class="field">
+<span>🕐</span>
+<select id="hourFrom"></select>
+</div>
+</div>
+
+<!-- KONEC -->
+<div class="col">
+<label>📅 Konec parkování</label>
+
+<div class="date-wrap">
+<input type="date" id="dateTo">
+</div>
+
+<div class="field">
+<span>🕐</span>
+<select id="hourTo"></select>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="card">
+<button onclick="generate()">Generovat</button>
+<button onclick="sendSMS()">SMS</button>
+<pre id="output"></pre>
+</div>
+
+<div class="card">
+<h3>Přehled</h3>
+<div class="table-wrap">
+<table id="table"></table>
+</div>
+</div>
+
+</div>
+
+<script>
+const gate="+420725582214";
+
+for(let i=150;i<=160;i++){ position.innerHTML+=`<option>${i}</option>`; }
+
+for(let i=0;i<24;i++){
+ let h=i.toString().padStart(2,'0');
+ hourFrom.innerHTML+=`<option value="${h}">${h}:00</option>`;
+ hourTo.innerHTML+=`<option value="${h}">${h}:00</option>`;
+}
+
+function generate(){
+ if(!dateFrom.value || !dateTo.value) return alert("Datumy");
+ let sms="OK";
+ output.innerText=sms;
+}
+
+function sendSMS(){
+ location.href=`sms:${gate}?body=test`;
+}
+</script>
+
+</body>
+</html>
