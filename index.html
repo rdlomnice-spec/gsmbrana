@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GSM Brána</title>
 
+<!-- ✅ PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="GSM Brána">
+
 <style>
 *{box-sizing:border-box}
 
@@ -53,7 +59,7 @@ input,select{
  min-width:0;
 }
 
-/* ✅ DATE WRAPPER */
+/* ✅ DATE WRAPPER (fix iOS + border) */
 .date-wrap{
  border:1px solid #ccc;
  border-radius:10px;
@@ -62,17 +68,15 @@ input,select{
  background:#fff;
 }
 
-/* ✅ ZAROVNÁNÍ DATUMU NA STŘED */
+/* ✅ centrum textu */
 .date-wrap input{
  border:none;
  height:42px;
  width:100%;
  padding:0 10px;
  font-size:16px;
-
- text-align:center;      /* ✅ horizontální střed */
- line-height:42px;       /* ✅ vertikální střed */
-
+ text-align:center;
+ line-height:42px;
  background:transparent;
 }
 
@@ -175,7 +179,9 @@ td.date{
 
 <h2>GSM Brána</h2>
 
+<!-- INPUT -->
 <div class="card">
+
 <div class="room-inline">
 <label>Pokoj</label>
 <select id="room">
@@ -189,8 +195,10 @@ td.date{
 
 <label>Pozice v modulu</label>
 <select id="position"></select>
+
 </div>
 
+<!-- DATUM + ČAS -->
 <div class="card">
 
 <div class="grid-main">
@@ -224,12 +232,14 @@ td.date{
 </div>
 </div>
 
+<!-- AKCE -->
 <div class="card">
 <button onclick="generate()">Generovat příkaz</button>
 <button onclick="sendSMS()">Odeslat SMS</button>
 <pre id="output"></pre>
 </div>
 
+<!-- TABULKA -->
 <div class="card">
 <h3>Přehled pozic</h3>
 
@@ -245,7 +255,9 @@ td.date{
 </table>
 </div>
 
-<div class="note">⚠️ Data nejsou synchronizovaná s bránou – pouze v telefonu</div>
+<div class="note">
+⚠️ Data nejsou synchronizovaná s bránou – pouze v telefonu
+</div>
 </div>
 
 </div>
@@ -253,16 +265,19 @@ td.date{
 <script>
 const gate="+420725582214";
 
+/* init */
 for(let i=150;i<=160;i++){
  position.innerHTML+=`<option>${i}</option>`;
 }
 
+/* hodiny */
 for(let i=0;i<24;i++){
  let h=i.toString().padStart(2,'0');
  hourFrom.innerHTML+=`<option value="${h}">${h}:00</option>`;
  hourTo.innerHTML+=`<option value="${h}">${h}:00</option>`;
 }
 
+/* validace */
 function validatePhone(){
  let v=phone.value.replace(/\s/g,'');
  if(/^\+\d{6,15}$/.test(v)||/^00\d{6,15}$/.test(v)){
@@ -272,6 +287,7 @@ function validatePhone(){
 }
 phone.addEventListener("input",validatePhone);
 
+/* formát */
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -279,7 +295,9 @@ function format(d,h){
  ("0"+x.getDate()).slice(-2)+h+"00";
 }
 
-function makeDate(d,h){ return new Date(d+"T"+h+":00"); }
+function makeDate(d,h){
+ return new Date(d+"T"+h+":00");
+}
 
 function niceDate(s){
  if(!s)return "-";
@@ -292,6 +310,7 @@ function norm(p){
  return p;
 }
 
+/* generování */
 function generate(){
 
  if(!validatePhone()) return alert("Číslo musí začínat + nebo 00");
@@ -316,17 +335,18 @@ function generate(){
  loadTable(position.value);
 }
 
+/* SMS */
 function sendSMS(){
  if(!output.innerText) return alert("Nejdříve vygeneruj příkaz");
  location.href=`sms:${gate}?body=${encodeURIComponent(output.innerText)}`;
 }
 
+/* tabulka */
 function loadTable(active=null){
  table.innerHTML="<tr><th class='center'>Poz</th><th class='center'>Pokoj</th><th>Telefon</th><th>Příjezd</th><th>Odjezd</th></tr>";
 
  for(let i=150;i<=160;i++){
   let c=(i==active)?"highlight":"";
-
   table.innerHTML+=`
   <tr class="${c}">
   <td class="center">${i}</td>
