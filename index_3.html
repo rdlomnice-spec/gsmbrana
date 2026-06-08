@@ -24,7 +24,6 @@ body{
  margin-bottom:10px;
 }
 
-/* pokoj */
 .room-inline{
  display:flex;
  align-items:center;
@@ -32,7 +31,6 @@ body{
 }
 .room-inline select{width:56px}
 
-/* základ */
 input,select{
  width:100%;
  min-width:0;
@@ -55,7 +53,7 @@ input,select{
  min-width:0;
 }
 
-/* ✅ DATE WRAPPER (FIX iOS) */
+/* ✅ DATE WRAPPER */
 .date-wrap{
  border:1px solid #ccc;
  border-radius:10px;
@@ -64,13 +62,17 @@ input,select{
  background:#fff;
 }
 
+/* ✅ ZAROVNÁNÍ DATUMU NA STŘED */
 .date-wrap input{
  border:none;
  height:42px;
  width:100%;
  padding:0 10px;
  font-size:16px;
- text-align:left;
+
+ text-align:center;      /* ✅ horizontální střed */
+ line-height:42px;       /* ✅ vertikální střed */
+
  background:transparent;
 }
 
@@ -173,9 +175,7 @@ td.date{
 
 <h2>GSM Brána</h2>
 
-<!-- INPUTY -->
 <div class="card">
-
 <div class="room-inline">
 <label>Pokoj</label>
 <select id="room">
@@ -189,10 +189,8 @@ td.date{
 
 <label>Pozice v modulu</label>
 <select id="position"></select>
-
 </div>
 
-<!-- DATUM + ČAS -->
 <div class="card">
 
 <div class="grid-main">
@@ -226,14 +224,12 @@ td.date{
 </div>
 </div>
 
-<!-- GENEROVÁNÍ -->
 <div class="card">
 <button onclick="generate()">Generovat příkaz</button>
 <button onclick="sendSMS()">Odeslat SMS</button>
 <pre id="output"></pre>
 </div>
 
-<!-- TABULKA -->
 <div class="card">
 <h3>Přehled pozic</h3>
 
@@ -257,19 +253,16 @@ td.date{
 <script>
 const gate="+420725582214";
 
-/* pozice */
 for(let i=150;i<=160;i++){
  position.innerHTML+=`<option>${i}</option>`;
 }
 
-/* hodiny */
 for(let i=0;i<24;i++){
  let h=i.toString().padStart(2,'0');
  hourFrom.innerHTML+=`<option value="${h}">${h}:00</option>`;
  hourTo.innerHTML+=`<option value="${h}">${h}:00</option>`;
 }
 
-/* validace */
 function validatePhone(){
  let v=phone.value.replace(/\s/g,'');
  if(/^\+\d{6,15}$/.test(v)||/^00\d{6,15}$/.test(v)){
@@ -279,7 +272,6 @@ function validatePhone(){
 }
 phone.addEventListener("input",validatePhone);
 
-/* formát */
 function format(d,h){
  let x=new Date(d+"T"+h+":00");
  return x.getFullYear().toString().slice(2)+
@@ -287,9 +279,7 @@ function format(d,h){
  ("0"+x.getDate()).slice(-2)+h+"00";
 }
 
-function makeDate(d,h){
- return new Date(d+"T"+h+":00");
-}
+function makeDate(d,h){ return new Date(d+"T"+h+":00"); }
 
 function niceDate(s){
  if(!s)return "-";
@@ -302,7 +292,6 @@ function norm(p){
  return p;
 }
 
-/* generování */
 function generate(){
 
  if(!validatePhone()) return alert("Číslo musí začínat + nebo 00");
@@ -327,13 +316,11 @@ function generate(){
  loadTable(position.value);
 }
 
-/* SMS */
 function sendSMS(){
  if(!output.innerText) return alert("Nejdříve vygeneruj příkaz");
  location.href=`sms:${gate}?body=${encodeURIComponent(output.innerText)}`;
 }
 
-/* tabulka */
 function loadTable(active=null){
  table.innerHTML="<tr><th class='center'>Poz</th><th class='center'>Pokoj</th><th>Telefon</th><th>Příjezd</th><th>Odjezd</th></tr>";
 
