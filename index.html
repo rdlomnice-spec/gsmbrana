@@ -31,22 +31,33 @@ body{
 }
 .room-inline select{width:56px}
 
-/* ✅ jednotné inputy */
+/* ✅ základ */
 input,select{
  width:100%;
  min-width:0;
+ max-width:100%;
  font-size:14px;
  border-radius:10px;
  border:1px solid #ccc;
+ display:block;
 }
 
-/* ✅ DATE – čistý nativní iOS */
+/* ✅ CRITICAL FIX iOS */
+.row2 > div{
+ min-width:0;
+ overflow:hidden;  /* ✅ ZABRÁNÍ PŘETOKU */
+}
+
+/* ✅ klíč pro date */
 input[type="date"]{
  height:42px;
  padding:0 10px;
+ width:100%;
+ max-width:100%;
+ display:block;
 }
 
-/* ✅ SELECT wrapper */
+/* ✅ čas */
 .field{
  position:relative;
  margin-top:6px;
@@ -62,6 +73,8 @@ input[type="date"]{
 
 .field select{
  height:42px;
+ width:100%;
+ max-width:100%;
  padding-left:34px;
 }
 
@@ -71,8 +84,6 @@ input[type="date"]{
  grid-template-columns:1fr 1fr;
  gap:10px;
 }
-
-.row2 > div{min-width:0}
 
 label{
  font-size:12px;
@@ -196,7 +207,6 @@ td.date{
 </div>
 
 </div>
-
 </div>
 
 <div class="card">
@@ -220,9 +230,7 @@ td.date{
 </table>
 </div>
 
-<div class="note">
-⚠️ Data nejsou synchronizovaná
-</div>
+<div class="note">⚠️ Data nejsou synchronizovaná</div>
 </div>
 
 </div>
@@ -230,7 +238,6 @@ td.date{
 <script>
 const gate="+420725582214";
 
-// init
 for(let i=150;i<=160;i++) position.innerHTML+=`<option>${i}</option>`;
 
 for(let i=0;i<24;i++){
@@ -269,7 +276,6 @@ function norm(p){
 }
 
 function generate(){
-
  if(!validatePhone())return alert("Špatné číslo");
  if(!dateFrom.value||!dateTo.value)return alert("Vyplň datumy");
 
@@ -282,7 +288,6 @@ function generate(){
  let t=format(dateTo.value,hourTo.value);
 
  let sms=`1234A${position.value}#${norm(phone.value)}#${f}#${t}#`;
-
  output.innerText=sms;
 
  localStorage.setItem("pos_"+position.value,norm(phone.value));
