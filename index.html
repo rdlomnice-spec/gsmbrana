@@ -31,7 +31,7 @@ body{
 }
 .room-inline select{width:56px}
 
-/* ✅ základ */
+/* základ */
 input,select{
  width:100%;
  min-width:0;
@@ -42,22 +42,38 @@ input,select{
  display:block;
 }
 
-/* ✅ CRITICAL FIX iOS */
+/* ✅ iOS SAFE CONTAINER */
 .row2 > div{
  min-width:0;
- overflow:hidden;  /* ✅ ZABRÁNÍ PŘETOKU */
+ overflow:hidden;
 }
 
-/* ✅ klíč pro date */
+/* ✅ DATE - FINÁLNÍ FIX */
 input[type="date"]{
  height:42px;
  padding:0 10px;
- width:100%;
- max-width:100%;
- display:block;
+ line-height:42px;
 }
 
-/* ✅ čas */
+/* ✅ VYROVNÁNÍ TEXTU iOS */
+input[type="date"]::-webkit-date-and-time-value{
+ text-align:left;
+ height:42px;
+ line-height:42px;
+}
+
+/* ✅ odstranění iOS vnitřního offsetu */
+input[type="date"]::-webkit-datetime-edit{
+ padding:0;
+}
+
+/* ✅ zarovnání všech částí */
+input[type="date"]::-webkit-datetime-edit-fields-wrapper{
+ display:flex;
+ align-items:center;
+}
+
+/* ✅ SELECT */
 .field{
  position:relative;
  margin-top:6px;
@@ -73,9 +89,8 @@ input[type="date"]{
 
 .field select{
  height:42px;
- width:100%;
- max-width:100%;
  padding-left:34px;
+ line-height:42px;
 }
 
 /* layout */
@@ -276,6 +291,7 @@ function norm(p){
 }
 
 function generate(){
+
  if(!validatePhone())return alert("Špatné číslo");
  if(!dateFrom.value||!dateTo.value)return alert("Vyplň datumy");
 
@@ -325,3 +341,4 @@ loadTable();
 
 </body>
 </html>
+``
