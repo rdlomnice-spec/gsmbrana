@@ -15,7 +15,10 @@ body{
  padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
 }
 
-.container{max-width:480px;margin:auto}
+.container{
+ max-width:480px;
+ margin:auto;
+}
 
 .card{
  background:#fff;
@@ -24,6 +27,7 @@ body{
  margin-bottom:10px;
 }
 
+/* pokoj */
 .room-inline{
  display:flex;
  align-items:center;
@@ -31,7 +35,7 @@ body{
 }
 .room-inline select{width:56px}
 
-/* základ */
+/* ✅ základ */
 input,select{
  width:100%;
  min-width:0;
@@ -42,38 +46,28 @@ input,select{
  display:block;
 }
 
-/* ✅ iOS SAFE CONTAINER */
-.row2 > div{
- min-width:0;
- overflow:hidden;
+/* ✅ GRID */
+.row2{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
 }
 
-/* ✅ DATE - FINÁLNÍ FIX */
+.row2 > div{
+ min-width:0;
+ overflow:hidden;   /* ✅ klíč proti přetékání */
+}
+
+/* ✅ DATE – pouze ohraničení */
 input[type="date"]{
  height:42px;
  padding:0 10px;
- line-height:42px;
+ width:100%;
+ max-width:100%;
+ background:#fff;
 }
 
-/* ✅ VYROVNÁNÍ TEXTU iOS */
-input[type="date"]::-webkit-date-and-time-value{
- text-align:left;
- height:42px;
- line-height:42px;
-}
-
-/* ✅ odstranění iOS vnitřního offsetu */
-input[type="date"]::-webkit-datetime-edit{
- padding:0;
-}
-
-/* ✅ zarovnání všech částí */
-input[type="date"]::-webkit-datetime-edit-fields-wrapper{
- display:flex;
- align-items:center;
-}
-
-/* ✅ SELECT */
+/* ✅ TIME */
 .field{
  position:relative;
  margin-top:6px;
@@ -90,14 +84,6 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper{
 .field select{
  height:42px;
  padding-left:34px;
- line-height:42px;
-}
-
-/* layout */
-.row2{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:10px;
 }
 
 label{
@@ -185,7 +171,8 @@ td.date{
 <div class="room-inline">
 <label>Pokoj</label>
 <select id="room">
-<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+<option>1</option><option>2</option><option>3</option>
+<option>4</option><option>5</option>
 </select>
 </div>
 
@@ -222,6 +209,7 @@ td.date{
 </div>
 
 </div>
+
 </div>
 
 <div class="card">
@@ -253,8 +241,12 @@ td.date{
 <script>
 const gate="+420725582214";
 
-for(let i=150;i<=160;i++) position.innerHTML+=`<option>${i}</option>`;
+// init
+for(let i=150;i<=160;i++){
+ position.innerHTML+=`<option>${i}</option>`;
+}
 
+// hodiny
 for(let i=0;i<24;i++){
  let h=i.toString().padStart(2,'0');
  hourFrom.innerHTML+=`<option value="${h}">${h}:00</option>`;
@@ -264,9 +256,11 @@ for(let i=0;i<24;i++){
 function validatePhone(){
  let v=phone.value.replace(/\s/g,'');
  if(/^\+\d{6,15}$/.test(v)||/^00\d{6,15}$/.test(v)){
-  phone.style.border="2px solid green";return true;
+  phone.style.border="2px solid green";
+  return true;
  }
- phone.style.border="2px solid red";return false;
+ phone.style.border="2px solid red";
+ return false;
 }
 phone.addEventListener("input",validatePhone);
 
@@ -277,7 +271,9 @@ function format(d,h){
  ("0"+x.getDate()).slice(-2)+h+"00";
 }
 
-function makeDate(d,h){return new Date(d+"T"+h+":00")}
+function makeDate(d,h){
+ return new Date(d+"T"+h+":00");
+}
 
 function niceDate(s){
  if(!s)return"-";
@@ -304,6 +300,7 @@ function generate(){
  let t=format(dateTo.value,hourTo.value);
 
  let sms=`1234A${position.value}#${norm(phone.value)}#${f}#${t}#`;
+
  output.innerText=sms;
 
  localStorage.setItem("pos_"+position.value,norm(phone.value));
@@ -319,11 +316,11 @@ function sendSMS(){
  location.href=`sms:${gate}?body=${encodeURIComponent(output.innerText)}`;
 }
 
-function loadTable(a=null){
+function loadTable(active=null){
  table.innerHTML="<tr><th class='center'>Poz</th><th class='center'>Pokoj</th><th>Telefon</th><th>Příjezd</th><th>Odjezd</th></tr>";
 
  for(let i=150;i<=160;i++){
-  let c=(i==a)?"highlight":"";
+  let c=(i==active)?"highlight":"";
 
   table.innerHTML+=`
   <tr class="${c}">
@@ -341,4 +338,3 @@ loadTable();
 
 </body>
 </html>
-``
