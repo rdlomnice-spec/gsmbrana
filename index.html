@@ -266,7 +266,7 @@ td.date{
 const gate="+420725582214";
 
 /* init */
-for(let i=150;i<=160;i++){
+for(let i=150;i<=169;i++){
  position.innerHTML+=`<option>${i}</option>`;
 }
 
@@ -345,7 +345,7 @@ function sendSMS(){
 function loadTable(active=null){
  table.innerHTML="<tr><th class='center'>Poz</th><th class='center'>Pokoj</th><th>Telefon</th><th>Příjezd</th><th>Odjezd</th></tr>";
 
- for(let i=150;i<=160;i++){
+ for(let i=150;i<=169;i++){
   let c=(i==active)?"highlight":"";
   table.innerHTML+=`
   <tr class="${c}">
